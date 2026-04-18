@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>KVLPL Discovery Interview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0C0F14;
+    --card: #161B24;
+    --card-active: #1C2330;
+    --border: #2A3142;
+    --accent: #4A9EE5;
+    --accent-glow: rgba(74, 158, 229, 0.15);
+    --green: #34D399;
+    --green-bg: rgba(52, 211, 153, 0.08);
+    --text: #E8ECF2;
+    --text-dim: #8892A4;
+    --text-faint: #4D5668;
+    --danger: #F87171;
+    --orange: #FB923C;
+    --tag-bg: rgba(74, 158, 229, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 100px;
+  }
+
+  /* ---- Header ---- */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(12, 15, 20, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text);
+  }
+
+  .header h1 span { color: var(--accent); }
+
+  .progress-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0%;
+  }
+
+  /* ---- Section ---- */
+  .section {
+    padding: 20px 16px 8px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .section-tip {
+    font-size: 12px;
+    color: var(--text-faint);
+    font-style: italic;
+    padding-left: 42px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  /* ---- Question Card ---- */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .q-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent);
+    opacity: 0.4;
+    transition: opacity 0.3s;
+  }
+
+  .q-card.done {
+    background: var(--green-bg);
+    border-color: rgba(52, 211, 153, 0.2);
+  }
+
+  .q-card.done::before {
+    background: var(--green);
+    opacity: 0.6;
+  }
+
+  .q-card.done .q-number { background: var(--green); color: var(--bg); }
+  .q-card.done .q-text { opacity: 0.6; }
+  .q-card.done .q-followups { opacity: 0.5; }
+
+  .q-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .q-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: background 0.3s;
+  }
+
+  .q-text {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text);
+    transition: opacity 0.3s;
+    flex: 1;
+  }
+
+  .q-check {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.3s;
+  }
+
+  .q-card.done .q-check {
+    border-color: var(--green);
+    background: var(--green);
+  }
+
+  .q-check svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .q-card.done .q-check svg { opacity: 1; }
+
+  .q-followups {
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-left: 40px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    transition: opacity 0.3s;
+  }
+
+  .q-followup {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 6px;
+    padding-left: 12px;
+    border-left: 2px solid var(--border);
+  }
+
+  .q-followup:last-child { margin-bottom: 0; }
+
+  .q-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+    margin-left: 40px;
+  }
+
+  .tag-must { background: rgba(248, 113, 113, 0.12); color: var(--danger); }
+  .tag-if-time { background: rgba(251, 146, 60, 0.12); color: var(--orange); }
+  .tag-closer { background: rgba(52, 211, 153, 0.12); color: var(--green); }
+
+  /* ---- Notes Area ---- */
+  .notes-section {
+    padding: 16px;
+  }
+
+  .notes-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .notes-box h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  .notes-box textarea {
+    width: 100%;
+    min-height: 120px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 12px;
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+  }
+
+  .notes-box textarea:focus { border-color: var(--accent); }
+  .notes-box textarea::placeholder { color: var(--text-faint); }
+
+  /* ---- Post-meeting Checklist ---- */
+  .post-meeting {
+    padding: 16px;
+    margin-top: 10px;
+  }
+
+  .post-meeting-card {
+    background: linear-gradient(135deg, rgba(74, 158, 229, 0.08), rgba(52, 211, 153, 0.05));
+    border: 1px solid rgba(74, 158, 229, 0.2);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .post-meeting-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .pm-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: var(--text-dim);
+    cursor: pointer;
+  }
+
+  .pm-item .pm-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pm-item.checked .pm-box {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .pm-item.checked { color: var(--text-faint); text-decoration: line-through; }
+
+  /* ---- Reset Button ---- */
+  .reset-wrap {
+    text-align: center;
+    padding: 30px 16px 60px;
+  }
+
+  .reset-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-faint);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 24px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+
+  .reset-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ---- Animations ---- */
+  @keyframes checkPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .q-card.just-checked { animation: checkPop 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <h1>KVLPL <span>Discovery</span></h1>
+    <span class="progress-label" id="progressLabel">0 / 15</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<div class="notes-section">
+  <div class="notes-box">
+    <h3>QUICK NOTES</h3>
+    <textarea placeholder="Jot down key phrases, names, numbers, anything you want to remember..." id="notesArea"></textarea>
+  </div>
+</div>
+
+<div class="post-meeting">
+  <div class="post-meeting-card">
+    <h3>After the Meeting</h3>
+    <div id="pmChecklist"></div>
+  </div>
+</div>
+
+<div class="reset-wrap">
+  <button class="reset-btn" onclick="resetAll()">Reset All</button>
+</div>
+
+<script>
+const sections = [
+  {
+    title: "OPENING",
+    icon: "&#x1F91D;",
+    iconBg: "rgba(74,158,229,0.15)",
+    iconColor: "#4A9EE5",
+    tip: "Build rapport first. Let them talk. 10 minutes here saves you 30 later.",
+    questions: [
+      {
+        num: 1,
+        text: "How has business been this year? What are your biggest projects right now and what\u2019s driving the growth?",
+        followUps: ["Walk me through your most recent project \u2014 what made it interesting?", "What\u2019s the most challenging move KVLPL has pulled off?"],
+        tag: "must"
+      },
+      {
+        num: 2,
+        text: "What made you decide to invest in digital presence now? Was there a specific trigger?",
+        followUps: ["Did you see a competitor doing it well? Or did a client say something?"],
+        tag: "must"
+      },
+    ]
+  },
+  {
+    title: "SOCIAL MEDIA & DIGITAL",
+    icon: "&#x1F4F1;",
+    iconBg: "rgba(52,211,153,0.12)",
+    iconColor: "#34D399",
+    tip: "Your main pitch zone. Understand what they tried, what they expect, and what success looks like to them.",
+    questions: [
+      {
+        num: 3,
+        text: "What have you tried so far on social media? What worked, what flopped, and who was handling it?",
+        followUps: ["Was it a team member\u2019s side task or did someone own it?", "What made you stop or slow down?"],
+        tag: "must"
+      },
+      {
+        num: 4,
+        text: "When you imagine KVLPL\u2019s LinkedIn 6 months from now, what does success look like? Followers? Leads? Industry recognition?",
+        followUps: ["If I could guarantee one outcome from social media, what would you pick?"],
+        tag: "must"
+      },
+      {
+        num: 5,
+        text: "Who is your dream audience online? If the right person saw your post tomorrow, who would that be?",
+        followUps: ["EPC project managers? Wind energy procurement? Port authorities? HR talent?"],
+        tag: "must"
+      },
+      {
+        num: 6,
+        text: "Which project or move is KVLPL\u2019s best story? Walk me through it \u2014 the challenge, the solution, the outcome.",
+        followUps: ["This will likely become your first showcase post. Get details: cargo size, route, obstacles, timeline."],
+        tag: "must"
+      },
+      {
+        num: 7,
+        text: "Do you have photos and videos of your ODC movements, crane ops, and site work? Where are they stored and can we access them?",
+        followUps: ["How many roughly? On phones? Google Drive? Hard drive?", "Any professional photography or mostly phone shots?"],
+        tag: "must"
+      },
+      {
+        num: 8,
+        text: "Are your clients okay with being tagged or mentioned? And is your team \u2014 MD, ops heads \u2014 open to being featured in posts or short videos?",
+        followUps: ["Employee advocacy is the biggest organic growth lever on LinkedIn."],
+        tag: "if-time"
+      },
+    ]
+  },
+  {
+    title: "BUSINESS POSITIONING",
+    icon: "&#x1F3AF;",
+    iconBg: "rgba(251,146,60,0.12)",
+    iconColor: "#FB923C",
+    tip: "Show you think beyond just posts. This is where you demonstrate strategic value. 10 minutes max.",
+    questions: [
+      {
+        num: 9,
+        text: "Who are your top 2\u20133 competitors and what does KVLPL do that they genuinely cannot match?",
+        followUps: ["Is it speed? Blade handling expertise? Chairman\u2019s 30-year experience? Pan-India reach?"],
+        tag: "must"
+      },
+      {
+        num: 10,
+        text: "How do clients find you today \u2014 is it mostly referrals, tenders, or direct outreach? And how do you want that mix to change?",
+        followUps: ["If all business is referral-based, social media\u2019s role is credibility + supporting sales, not cold leads."],
+        tag: "must"
+      },
+      {
+        num: 11,
+        text: "Where do you see KVLPL in 2\u20133 years? New services, new markets, bigger scale? What should digital help unlock?",
+        followUps: ["Are you going deeper into renewables or expanding into new sectors?"],
+        tag: "if-time"
+      },
+    ]
+  },
+  {
+    title: "CLOSING & NEXT STEPS",
+    icon: "&#x1F680;",
+    iconBg: "rgba(168,85,247,0.12)",
+    iconColor: "#A855F7",
+    tip: "Convert this meeting into a paid engagement. Be specific. Lock in a timeline.",
+    questions: [
+      {
+        num: 12,
+        text: "Have you worked with a marketing or digital agency before? How was that experience?",
+        followUps: ["If burned before: what went wrong? This tells you their fears and expectations."],
+        tag: "must"
+      },
+      {
+        num: 13,
+        text: "Of everything we discussed, what are the top 2 things that matter most to you right now?",
+        followUps: ["This is what your proposal should lead with."],
+        tag: "must"
+      },
+      {
+        num: 14,
+        text: "Who is the decision maker on this? And who will be our day-to-day contact for approvals and coordination?",
+        followUps: ["Critical for your proposal \u2014 know who you\u2019re writing it for."],
+        tag: "closer"
+      },
+      {
+        num: 15,
+        text: "Can I come back in a week with a concrete proposal \u2014 scope, deliverables, timeline, and investment? What format works best for you?",
+        followUps: ["Lock the date. \u201CI\u2019ll send it by [date]\u201D is better than \u201CI\u2019ll get back to you.\u201D"],
+        tag: "closer"
+      },
+    ]
+  },
+];
+
+const postMeetingItems = [
+  "Send thank-you WhatsApp/email within 2 hours",
+  "Transcribe recording \u2014 highlight key quotes",
+  "Identify 3 quick-win post ideas from conversation",
+  "Note photos/videos they promised to share",
+  "Draft proposal outline within 48 hours",
+  "Share notes with Claude to build the proposal",
+];
+
+// ---- Render ----
+const app = document.getElementById("app");
+const progressLabel = document.getElementById("progressLabel");
+const progressFill = document.getElementById("progressFill");
+const TOTAL = 15;
+
+// Load state
+let checked = JSON.parse(localStorage.getItem("kvlpl_checked") || "{}");
+let pmChecked = JSON.parse(localStorage.getItem("kvlpl_pm") || "{}");
+let notes = localStorage.getItem("kvlpl_notes") || "";
+
+function renderSections() {
+  app.innerHTML = "";
+  sections.forEach(sec => {
+    const sDiv = document.createElement("div");
+    sDiv.className = "section";
+    sDiv.innerHTML = `
+      <div class="section-header">
+        <div class="section-icon" style="background:${sec.iconBg};color:${sec.iconColor}">${sec.icon}</div>
+        <div class="section-title">${sec.title}</div>
+      </div>
+      <div class="section-tip">${sec.tip}</div>
+    `;
+
+    sec.questions.forEach(q => {
+      const isDone = checked[q.num] || false;
+      const card = document.createElement("div");
+      card.className = "q-card" + (isDone ? " done" : "");
+      card.setAttribute("data-num", q.num);
+
+      let followHtml = "";
+      if (q.followUps && q.followUps.length) {
+        followHtml = `<div class="q-followups">${q.followUps.map(f => `<div class="q-followup">${f}</div>`).join("")}</div>`;
+      }
+
+      let tagHtml = "";
+      if (q.tag === "must") tagHtml = `<div class="q-tag tag-must">Must Ask</div>`;
+      else if (q.tag === "if-time") tagHtml = `<div class="q-tag tag-if-time">If Time</div>`;
+      else if (q.tag === "closer") tagHtml = `<div class="q-tag tag-closer">Closer</div>`;
+
+      card.innerHTML = `
+        <div class="q-top">
+          <div class="q-number">${String(q.num).padStart(2, '0')}</div>
+          <div class="q-text">${q.text}</div>
+          <div class="q-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0C0F14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+        </div>
+        ${followHtml}
+        ${tagHtml}
+      `;
+
+      card.addEventListener("click", () => toggleQuestion(q.num, card));
+      sDiv.appendChild(card);
+    });
+
+    app.appendChild(sDiv);
+  });
+}
+
+function toggleQuestion(num, card) {
+  checked[num] = !checked[num];
+  localStorage.setItem("kvlpl_checked", JSON.stringify(checked));
+
+  if (checked[num]) {
+    card.classList.add("done", "just-checked");
+    setTimeout(() => card.classList.remove("just-checked"), 300);
+  } else {
+    card.classList.remove("done");
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const count = Object.values(checked).filter(Boolean).length;
+  progressLabel.textContent = `${count} / ${TOTAL}`;
+  progressFill.style.width = `${(count / TOTAL) * 100}%`;
+}
+
+// Post-meeting checklist
+function renderPM() {
+  const container = document.getElementById("pmChecklist");
+  container.innerHTML = "";
+  postMeetingItems.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.className = "pm-item" + (pmChecked[i] ? " checked" : "");
+    div.innerHTML = `
+      <div class="pm-box">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0C0F14" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span>${item}</span>
+    `;
+    div.addEventListener("click", () => {
+      pmChecked[i] = !pmChecked[i];
+      localStorage.setItem("kvlpl_pm", JSON.stringify(pmChecked));
+      renderPM();
+    });
+    container.appendChild(div);
+  });
+}
+
+// Notes
+document.getElementById("notesArea").value = notes;
+document.getElementById("notesArea").addEventListener("input", (e) => {
+  localStorage.setItem("kvlpl_notes", e.target.value);
+});
+
+function resetAll() {
+  if (confirm("Reset all progress, notes, and checklists?")) {
+    localStorage.removeItem("kvlpl_checked");
+    localStorage.removeItem("kvlpl_pm");
+    localStorage.removeItem("kvlpl_notes");
+    checked = {};
+    pmChecked = {};
+    document.getElementById("notesArea").value = "";
+    renderSections();
+    renderPM();
+    updateProgress();
+  }
+}
+
+// Init
+renderSections();
+renderPM();
+updateProgress();
+</script>
+</body>
+</html>
